@@ -1,0 +1,117 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="LibraryManagement.Views.MainWindow"
+        x:CompileBindings="False"
+        Title="Управление библиотекой" Width="1100" Height="650">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="📚 Библиотека книг" FontSize="24" FontWeight="Bold" Margin="0,0,0,10"/>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="10" Margin="0,0,0,10">
+            <TextBlock Text="Поиск:" VerticalAlignment="Center"/>
+            <TextBox x:Name="SearchTextBox" Width="200" Watermark="Введите название..."
+                     TextChanged="SearchTextBox_TextChanged"/>
+
+            <TextBlock Text="Автор:" VerticalAlignment="Center" Margin="10,0,0,0"/>
+            <ComboBox x:Name="AuthorFilterComboBox" Width="160" SelectionChanged="AuthorFilter_Changed">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding LastName}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <TextBlock Text="Жанр:" VerticalAlignment="Center" Margin="10,0,0,0"/>
+            <ComboBox x:Name="GenreFilterComboBox" Width="160" SelectionChanged="GenreFilter_Changed">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <Button Content="Сбросить фильтры" Click="ResetFilters_Click" Margin="10,0,0,0"/>
+        </StackPanel>
+
+        <!-- Список книг -->
+        <ListBox Grid.Row="2" x:Name="BooksListBox"
+                 SelectionChanged="BooksListBox_SelectionChanged">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Border Padding="10,8" Margin="0,2">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="40"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="180"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="80"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="{Binding Id}"
+                                       VerticalAlignment="Center" Foreground="Gray"/>
+
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="14"/>
+                                <TextBlock Text="{Binding ISBN}" FontSize="11" Foreground="Gray"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                <TextBlock FontSize="12">
+                                    <Run Text="✍️ "/>
+                                    <Run Text="{Binding Author.FirstName}"/>
+                                    <Run Text=" "/>
+                                    <Run Text="{Binding Author.LastName}"/>
+                                </TextBlock>
+                                <TextBlock FontSize="11" Foreground="Gray">
+                                    <Run Text="🏷️ "/>
+                                    <Run Text="{Binding Genre.Name}"/>
+                                </TextBlock>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="3" VerticalAlignment="Center">
+                                <TextBlock FontSize="12">
+                                    <Run Text="📅 "/>
+                                    <Run Text="{Binding PublishYear}"/>
+                                </TextBlock>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="4" VerticalAlignment="Center">
+                                <TextBlock FontSize="12" FontWeight="SemiBold">
+                                    <Run Text="📦 "/>
+                                    <Run Text="{Binding QuantityInStock}"/>
+                                </TextBlock>
+                                <TextBlock Text="в наличии" FontSize="10" Foreground="Gray"/>
+                            </StackPanel>
+
+                            <Border Grid.Column="5" VerticalAlignment="Center"
+                                    CornerRadius="5" Padding="6,3"
+                                    Background="{Binding QuantityInStock, Converter={x:Null}}">
+                                <TextBlock FontSize="11" FontWeight="Bold"
+                                           Text="{Binding QuantityInStock}"
+                                           Foreground="White"/>
+                            </Border>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="8" Margin="0,10,0,0">
+            <Button Content="➕ Добавить книгу" Click="AddBook_Click" Width="150"/>
+            <Button x:Name="EditButton" Content="✏️ Редактировать" Click="EditBook_Click" Width="150" IsEnabled="False"/>
+            <Button x:Name="DeleteButton" Content="🗑️ Удалить" Click="DeleteBook_Click" Width="130" IsEnabled="False"/>
+            <TextBlock x:Name="StatusText" VerticalAlignment="Center" Margin="20,0,0,0" Foreground="Gray" FontStyle="Italic"/>
+            <Button Content="👤 Авторы" Click="ManageAuthors_Click" Width="120" Margin="20,0,0,0"/>
+            <Button Content="📖 Жанры" Click="ManageGenres_Click" Width="120"/>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -1,0 +1,71 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:models="using:LibraryManagement.Models"
+        x:Class="LibraryManagement.Views.BookEditWindow"
+        Title="Редактирование книги" Width="500" Height="450">
+    
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Название:" Margin="0,0,0,5"/>
+        <TextBox Grid.Row="1" x:Name="TitleTextBox" Margin="0,0,0,10"/>
+
+        <TextBlock Grid.Row="2" Text="Автор:" Margin="0,0,0,5"/>
+        <ComboBox Grid.Row="3" x:Name="AuthorComboBox" Margin="0,0,0,10"
+                  x:DataType="models:Author">
+            <ComboBox.ItemTemplate>
+                <DataTemplate DataType="models:Author">
+                    <TextBlock Text="{Binding LastName}"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        <Grid Grid.Row="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0">
+                <TextBlock Text="Жанр:" Margin="0,0,0,5"/>
+                <ComboBox x:Name="GenreComboBox" Margin="0,0,0,10"
+                          x:DataType="models:Genre">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate DataType="models:Genre">
+                            <TextBlock Text="{Binding Name}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </StackPanel>
+
+            <StackPanel Grid.Column="2">
+                <TextBlock Text="Год издания:" Margin="0,0,0,5"/>
+                <NumericUpDown x:Name="YearNumeric" Minimum="1000" Maximum="2100" Margin="0,0,0,10"/>
+            </StackPanel>
+        </Grid>
+
+        <TextBlock Grid.Row="5" Text="ISBN:" Margin="0,0,0,5"/>
+        <TextBox Grid.Row="6" x:Name="ISBNTextBox" Margin="0,0,0,10"/>
+
+        <StackPanel Grid.Row="7">
+            <TextBlock Text="Количество в наличии:" Margin="0,0,0,5"/>
+            <NumericUpDown x:Name="QuantityNumeric" Minimum="0" Maximum="10000"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="8" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10" Margin="0,20,0,0">
+            <Button Content="Сохранить" Click="Save_Click" Width="100"/>
+            <Button Content="Отмена" Click="Cancel_Click" Width="100"/>
+        </StackPanel>
+    </Grid>
+</Window>
