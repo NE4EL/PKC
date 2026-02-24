@@ -21,10 +21,10 @@
         <TextBlock Grid.Row="0" Text="Название книги:" Margin="0,0,0,5" FontWeight="SemiBold"/>
         <TextBox Grid.Row="1" x:Name="TitleTextBox" Watermark="Введите название книги" Margin="0,0,0,15"/>
 
-        <TextBlock Grid.Row="2" Text="Автор:" Margin="0,0,0,5" FontWeight="SemiBold"/>
-        <ComboBox Grid.Row="3" x:Name="AuthorComboBox" Margin="0,0,0,15"
-                  x:DataType="models:Author">
-            <ComboBox.ItemTemplate>
+        <TextBlock Grid.Row="2" Text="Авторы:" Margin="0,0,0,5" FontWeight="SemiBold"/>
+        <ListBox Grid.Row="3" x:Name="AuthorsListBox" Margin="0,0,0,15"
+                 SelectionMode="Multiple">
+            <ListBox.ItemTemplate>
                 <DataTemplate DataType="models:Author">
                     <TextBlock>
                         <Run Text="{Binding FirstName}"/>
@@ -32,8 +32,8 @@
                         <Run Text="{Binding LastName}"/>
                     </TextBlock>
                 </DataTemplate>
-            </ComboBox.ItemTemplate>
-        </ComboBox>
+            </ListBox.ItemTemplate>
+        </ListBox>
 
         <Grid Grid.Row="4" Margin="0,0,0,15">
             <Grid.ColumnDefinitions>
@@ -43,14 +43,15 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0">
-                <TextBlock Text="Жанр:" Margin="0,0,0,5" FontWeight="SemiBold"/>
-                <ComboBox x:Name="GenreComboBox" x:DataType="models:Genre">
-                    <ComboBox.ItemTemplate>
+                <TextBlock Text="Жанры:" Margin="0,0,0,5" FontWeight="SemiBold"/>
+                <ListBox x:Name="GenresListBox"
+                         SelectionMode="Multiple">
+                    <ListBox.ItemTemplate>
                         <DataTemplate DataType="models:Genre">
                             <TextBlock Text="{Binding Name}"/>
                         </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </StackPanel>
 
             <StackPanel Grid.Column="2">

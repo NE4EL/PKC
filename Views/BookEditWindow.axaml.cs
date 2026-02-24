@@ -10,8 +10,8 @@ namespace LibraryManagement.Views;
 public partial class BookEditWindow : Window
 {
     private Book? _book;
-    private List<Author> _authors;
-    private List<Genre> _genres;
+    private readonly List<Author> _authors;
+    private readonly List<Genre> _genres;
 
     public BookEditWindow(List<Author> authors, List<Genre> genres, Book? book = null)
     {
@@ -21,26 +21,40 @@ public partial class BookEditWindow : Window
         _authors = authors;
         _genres = genres;
 
-        AuthorComboBox.ItemsSource = authors;
-        GenreComboBox.ItemsSource = genres;
+        AuthorsListBox!.ItemsSource = authors;
+        GenresListBox!.ItemsSource = genres;
 
         if (book != null)
         {
             Title = "Редактирование книги";
             TitleTextBox.Text = book.Title;
-            AuthorComboBox.SelectedIndex = authors.FindIndex(a => a.Id == book.AuthorId);
-            GenreComboBox.SelectedIndex = genres.FindIndex(g => g.Id == book.GenreId);
             YearNumeric.Value = book.PublishYear;
             ISBNTextBox.Text = book.ISBN;
             QuantityNumeric.Value = book.QuantityInStock;
+
+            if (book.Authors != null)
+            {
+                var selectedAuthors = authors
+                    .Where(a => book.Authors.Any(ba => ba.Id == a.Id))
+                    .ToList();
+                foreach (var a in selectedAuthors)
+                    AuthorsListBox!.SelectedItems!.Add(a);
+            }
+
+            if (book.Genres != null)
+            {
+                var selectedGenres = genres
+                    .Where(g => book.Genres.Any(bg => bg.Id == g.Id))
+                    .ToList();
+                foreach (var g in selectedGenres)
+                    GenresListBox!.SelectedItems!.Add(g);
+            }
         }
         else
         {
             Title = "Добавление книги";
             YearNumeric.Value = DateTime.Now.Year;
             QuantityNumeric.Value = 1;
-            if (authors.Count > 0) AuthorComboBox.SelectedIndex = 0;
-            if (genres.Count > 0) GenreComboBox.SelectedIndex = 0;
         }
     }
 
@@ -164,17 +178,23 @@ public partial class BookEditWindow : Window
             return;
         }
 
-        // Валидация автора
-        if (AuthorComboBox.SelectedItem is not Author selectedAuthor)
+        // Валидация авторов
+        var selectedAuthors = (AuthorsListBox?.SelectedItems ?? Array.Empty<object>())
+            .OfType<Author>()
+            .ToList();
+        if (selectedAuthors.Count == 0)
         {
-            await ShowError("Необходимо выбрать автора");
+            await ShowError("Необходимо выбрать хотя бы одного автора");
             return;
         }
 
-        // Валидация жанра
-        if (GenreComboBox.SelectedItem is not Genre selectedGenre)
+        // Валидация жанров
+        var selectedGenres = (GenresListBox?.SelectedItems ?? Array.Empty<object>())
+            .OfType<Genre>()
+            .ToList();
+        if (selectedGenres.Count == 0)
         {
-            await ShowError("Необходимо выбрать жанр");
+            await ShowError("Необходимо выбрать хотя бы один жанр");
             return;
         }
 
@@ -207,11 +227,11 @@ public partial class BookEditWindow : Window
         {
             Id = _book?.Id ?? 0,
             Title = TitleTextBox.Text.Trim(),
-            AuthorId = selectedAuthor.Id,
-            GenreId = selectedGenre.Id,
             PublishYear = year,
             ISBN = isbn.Trim(),
-            QuantityInStock = quantity
+            QuantityInStock = quantity,
+            Authors = selectedAuthors,
+            Genres = selectedGenres
         };
 
         Close(book);

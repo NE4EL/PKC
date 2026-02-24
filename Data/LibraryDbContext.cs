@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using LibraryManagement.Models;
 using System;
+using System.Collections.Generic;
 
 namespace LibraryManagement.Data;
 
@@ -42,19 +43,49 @@ public class LibraryDbContext : DbContext
             entity.Property(b => b.ISBN).IsRequired().HasMaxLength(20);
             entity.Property(b => b.PublishYear).IsRequired();
             entity.Property(b => b.QuantityInStock).IsRequired();
-
-            // Связь с Author (один-ко-многим)
-            entity.HasOne(b => b.Author)
-                .WithMany(a => a.Books)
-                .HasForeignKey(b => b.AuthorId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            // Связь с Genre (один-ко-многим)
-            entity.HasOne(b => b.Genre)
-                .WithMany(g => g.Books)
-                .HasForeignKey(b => b.GenreId)
-                .OnDelete(DeleteBehavior.Cascade);
         });
+
+        // Связи многие-ко-многим Book-Author
+        modelBuilder.Entity<Book>()
+            .HasMany(b => b.Authors)
+            .WithMany(a => a.Books)
+            .UsingEntity<Dictionary<string, object>>(
+                "BookAuthor",
+                j => j
+                    .HasOne<Author>()
+                    .WithMany()
+                    .HasForeignKey("AuthorId")
+                    .OnDelete(DeleteBehavior.Cascade),
+                j => j
+                    .HasOne<Book>()
+                    .WithMany()
+                    .HasForeignKey("BookId")
+                    .OnDelete(DeleteBehavior.Cascade),
+                j =>
+                {
+                    j.HasKey("BookId", "AuthorId");
+                });
+
+        // Связи многие-ко-многим Book-Genre
+        modelBuilder.Entity<Book>()
+            .HasMany(b => b.Genres)
+            .WithMany(g => g.Books)
+            .UsingEntity<Dictionary<string, object>>(
+                "BookGenre",
+                j => j
+                    .HasOne<Genre>()
+                    .WithMany()
+                    .HasForeignKey("GenreId")
+                    .OnDelete(DeleteBehavior.Cascade),
+                j => j
+                    .HasOne<Book>()
+                    .WithMany()
+                    .HasForeignKey("BookId")
+                    .OnDelete(DeleteBehavior.Cascade),
+                j =>
+                {
+                    j.HasKey("BookId", "GenreId");
+                });
 
         // Начальные данные
         SeedData(modelBuilder);
@@ -73,8 +104,18 @@ public class LibraryDbContext : DbContext
         );
 
         modelBuilder.Entity<Book>().HasData(
-            new Book { Id = 1, Title = "Война и мир", AuthorId = 1, GenreId = 1, PublishYear = 1869, ISBN = "978-5-17-123456-7", QuantityInStock = 5 },
-            new Book { Id = 2, Title = "Преступление и наказание", AuthorId = 2, GenreId = 1, PublishYear = 1866, ISBN = "978-5-17-234567-8", QuantityInStock = 3 }
+            new Book { Id = 1, Title = "Война и мир", PublishYear = 1869, ISBN = "978-5-17-123456-7", QuantityInStock = 5 },
+            new Book { Id = 2, Title = "Преступление и наказание", PublishYear = 1866, ISBN = "978-5-17-234567-8", QuantityInStock = 3 }
+        );
+
+        modelBuilder.Entity("BookAuthor").HasData(
+            new { BookId = 1, AuthorId = 1 },
+            new { BookId = 2, AuthorId = 2 }
+        );
+
+        modelBuilder.Entity("BookGenre").HasData(
+            new { BookId = 1, GenreId = 1 },
+            new { BookId = 2, GenreId = 1 }
         );
     }
 }

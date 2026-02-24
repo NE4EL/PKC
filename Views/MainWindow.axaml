@@ -67,13 +67,11 @@
                             <StackPanel Grid.Column="2" VerticalAlignment="Center">
                                 <TextBlock FontSize="12">
                                     <Run Text="✍️ "/>
-                                    <Run Text="{Binding Author.FirstName}"/>
-                                    <Run Text=" "/>
-                                    <Run Text="{Binding Author.LastName}"/>
+                                    <Run Text="{Binding AuthorsDisplay}"/>
                                 </TextBlock>
                                 <TextBlock FontSize="11" Foreground="Gray">
                                     <Run Text="🏷️ "/>
-                                    <Run Text="{Binding Genre.Name}"/>
+                                    <Run Text="{Binding GenresDisplay}"/>
                                 </TextBlock>
                             </StackPanel>
 

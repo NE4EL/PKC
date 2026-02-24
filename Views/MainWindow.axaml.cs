@@ -52,8 +52,8 @@ public partial class MainWindow : Window
         {
             using var db = new LibraryDbContext();
             var query = db.Books
-                .Include(b => b.Author)
-                .Include(b => b.Genre)
+                .Include(b => b.Authors)
+                .Include(b => b.Genres)
                 .AsQueryable();
 
             var searchText = SearchTextBox?.Text ?? string.Empty;
@@ -61,10 +61,10 @@ public partial class MainWindow : Window
                 query = query.Where(b => b.Title.ToLower().Contains(searchText.ToLower()));
 
             if (AuthorFilterComboBox?.SelectedItem is Author selectedAuthor)
-                query = query.Where(b => b.AuthorId == selectedAuthor.Id);
+                query = query.Where(b => b.Authors.Any(a => a.Id == selectedAuthor.Id));
 
             if (GenreFilterComboBox?.SelectedItem is Genre selectedGenre)
-                query = query.Where(b => b.GenreId == selectedGenre.Id);
+                query = query.Where(b => b.Genres.Any(g => g.Id == selectedGenre.Id));
 
             var books = query.ToList();
 
@@ -117,15 +117,23 @@ public partial class MainWindow : Window
         if (result != null)
         {
             using var db2 = new LibraryDbContext();
-            db2.Books.Add(new Book
+            var authorIds = result.Authors.Select(a => a.Id).ToList();
+            var genreIds = result.Genres.Select(g => g.Id).ToList();
+
+            var authorsToAttach = db2.Authors.Where(a => authorIds.Contains(a.Id)).ToList();
+            var genresToAttach = db2.Genres.Where(g => genreIds.Contains(g.Id)).ToList();
+
+            var newBook = new Book
             {
                 Title = result.Title,
-                AuthorId = result.AuthorId,
-                GenreId = result.GenreId,
                 PublishYear = result.PublishYear,
                 ISBN = result.ISBN,
-                QuantityInStock = result.QuantityInStock
-            });
+                QuantityInStock = result.QuantityInStock,
+                Authors = authorsToAttach,
+                Genres = genresToAttach
+            };
+
+            db2.Books.Add(newBook);
             db2.SaveChanges();
             RefreshList();
         }
@@ -139,21 +147,43 @@ public partial class MainWindow : Window
         var authors = db.Authors.ToList();
         var genres = db.Genres.ToList();
 
-        var dialog = new BookEditWindow(authors, genres, _selectedBook);
+        var bookWithRelations = db.Books
+            .Include(b => b.Authors)
+            .Include(b => b.Genres)
+            .FirstOrDefault(b => b.Id == _selectedBook.Id);
+
+        var dialog = new BookEditWindow(authors, genres, bookWithRelations);
         var result = await dialog.ShowDialog<Book?>(this);
 
         if (result != null)
         {
             using var db2 = new LibraryDbContext();
-            var existing = db2.Books.Find(result.Id);
+            var existing = db2.Books
+                .Include(b => b.Authors)
+                .Include(b => b.Genres)
+                .FirstOrDefault(b => b.Id == result.Id);
+
             if (existing != null)
             {
                 existing.Title = result.Title;
-                existing.AuthorId = result.AuthorId;
-                existing.GenreId = result.GenreId;
                 existing.PublishYear = result.PublishYear;
                 existing.ISBN = result.ISBN;
                 existing.QuantityInStock = result.QuantityInStock;
+
+                existing.Authors.Clear();
+                existing.Genres.Clear();
+
+                var authorIds = result.Authors.Select(a => a.Id).ToList();
+                var genreIds = result.Genres.Select(g => g.Id).ToList();
+
+                var authorsToAttach = db2.Authors.Where(a => authorIds.Contains(a.Id)).ToList();
+                var genresToAttach = db2.Genres.Where(g => genreIds.Contains(g.Id)).ToList();
+
+                foreach (var a in authorsToAttach)
+                    existing.Authors.Add(a);
+                foreach (var g in genresToAttach)
+                    existing.Genres.Add(g);
+
                 db2.SaveChanges();
             }
             _selectedBook = null;
