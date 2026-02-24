@@ -2,10 +2,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:models="using:LibraryManagement.Models"
         x:Class="LibraryManagement.Views.BookEditWindow"
-        Title="Редактирование книги" Width="500" Height="450">
+        Title="Редактирование книги" Width="520" Height="500">
     
     <Grid Margin="20">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -17,30 +18,33 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="Название:" Margin="0,0,0,5"/>
-        <TextBox Grid.Row="1" x:Name="TitleTextBox" Margin="0,0,0,10"/>
+        <TextBlock Grid.Row="0" Text="Название книги:" Margin="0,0,0,5" FontWeight="SemiBold"/>
+        <TextBox Grid.Row="1" x:Name="TitleTextBox" Watermark="Введите название книги" Margin="0,0,0,15"/>
 
-        <TextBlock Grid.Row="2" Text="Автор:" Margin="0,0,0,5"/>
-        <ComboBox Grid.Row="3" x:Name="AuthorComboBox" Margin="0,0,0,10"
+        <TextBlock Grid.Row="2" Text="Автор:" Margin="0,0,0,5" FontWeight="SemiBold"/>
+        <ComboBox Grid.Row="3" x:Name="AuthorComboBox" Margin="0,0,0,15"
                   x:DataType="models:Author">
             <ComboBox.ItemTemplate>
                 <DataTemplate DataType="models:Author">
-                    <TextBlock Text="{Binding LastName}"/>
+                    <TextBlock>
+                        <Run Text="{Binding FirstName}"/>
+                        <Run Text=" "/>
+                        <Run Text="{Binding LastName}"/>
+                    </TextBlock>
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>
 
-        <Grid Grid.Row="4">
+        <Grid Grid.Row="4" Margin="0,0,0,15">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="15"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0">
-                <TextBlock Text="Жанр:" Margin="0,0,0,5"/>
-                <ComboBox x:Name="GenreComboBox" Margin="0,0,0,10"
-                          x:DataType="models:Genre">
+                <TextBlock Text="Жанр:" Margin="0,0,0,5" FontWeight="SemiBold"/>
+                <ComboBox x:Name="GenreComboBox" x:DataType="models:Genre">
                     <ComboBox.ItemTemplate>
                         <DataTemplate DataType="models:Genre">
                             <TextBlock Text="{Binding Name}"/>
@@ -50,22 +54,35 @@
             </StackPanel>
 
             <StackPanel Grid.Column="2">
-                <TextBlock Text="Год издания:" Margin="0,0,0,5"/>
-                <NumericUpDown x:Name="YearNumeric" Minimum="1000" Maximum="2100" Margin="0,0,0,10"/>
+                <TextBlock Text="Год издания:" Margin="0,0,0,5" FontWeight="SemiBold"/>
+                <NumericUpDown x:Name="YearNumeric" 
+                               Minimum="1000" 
+                               Maximum="2100"
+                               FormatString="0"
+                               Increment="1"/>
             </StackPanel>
         </Grid>
 
-        <TextBlock Grid.Row="5" Text="ISBN:" Margin="0,0,0,5"/>
-        <TextBox Grid.Row="6" x:Name="ISBNTextBox" Margin="0,0,0,10"/>
-
-        <StackPanel Grid.Row="7">
-            <TextBlock Text="Количество в наличии:" Margin="0,0,0,5"/>
-            <NumericUpDown x:Name="QuantityNumeric" Minimum="0" Maximum="10000"/>
+        <TextBlock Grid.Row="5" Text="ISBN:" Margin="0,0,0,5" FontWeight="SemiBold"/>
+        <StackPanel Grid.Row="6" Margin="0,0,0,15">
+            <TextBox x:Name="ISBNTextBox" Watermark="978-5-17-123456-7 или 5-17-123456-7"/>
+            <TextBlock Text="Формат: 978-X-XX-XXXXXX-X (13 цифр) или X-XX-XXXXXX-X (10 цифр)" 
+                       FontSize="11" 
+                       Foreground="Gray" 
+                       Margin="0,3,0,0"/>
         </StackPanel>
 
-        <StackPanel Grid.Row="8" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10" Margin="0,20,0,0">
-            <Button Content="Сохранить" Click="Save_Click" Width="100"/>
-            <Button Content="Отмена" Click="Cancel_Click" Width="100"/>
+        <TextBlock Grid.Row="7" Text="Количество в наличии:" Margin="0,0,0,5" FontWeight="SemiBold"/>
+        <NumericUpDown Grid.Row="8" x:Name="QuantityNumeric" 
+                       Minimum="0" 
+                       Maximum="10000"
+                       FormatString="0"
+                       Increment="1"
+                       VerticalAlignment="Top"/>
+
+        <StackPanel Grid.Row="9" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10" Margin="0,20,0,0">
+            <Button Content="💾 Сохранить" Click="Save_Click" Width="120"/>
+            <Button Content="❌ Отмена" Click="Cancel_Click" Width="120"/>
         </StackPanel>
     </Grid>
 </Window>

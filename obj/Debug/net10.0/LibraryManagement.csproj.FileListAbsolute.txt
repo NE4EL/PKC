@@ -169,3 +169,4 @@
 /Users/egor/codeALL/3 Семестер/ПКС/Project/LibraryManagement/obj/Debug/net10.0/LibraryManagement.pdb
 /Users/egor/codeALL/3 Семестер/ПКС/Project/LibraryManagement/obj/Debug/net10.0/LibraryManagement.genruntimeconfig.cache
 /Users/egor/codeALL/3 Семестер/ПКС/Project/LibraryManagement/obj/Debug/net10.0/ref/LibraryManagement.dll
+/Users/egor/codeALL/3 Семестер/ПКС/Project/LibraryManagement/obj/Debug/net10.0/LibraryManagement.sourcelink.json
